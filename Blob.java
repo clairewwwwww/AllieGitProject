@@ -8,8 +8,18 @@ import java.util.Formatter;
 
 public class Blob
 {
-    public static void fileToString (String fileName) throws Throwable
+
+    public Blob (String fileName) throws Throwable
+    {
+        String beforeShah = fileToString (fileName);
+        System.out.println (encryptPassword (beforeShah));
+    }
+
+
+
+    public static String fileToString (String fileName) throws Throwable
         {
+            String endResult = "";
             //File file = new File ("output.txt");
             File file = new File (fileName);
             char ch;
@@ -22,7 +32,7 @@ public class Blob
                 while(fr.ready())
                 {
                     ch = (char) fr.read();
-                    System.out.print(ch);
+                    endResult += ch;
                 }
  
                 fr.close();
@@ -30,6 +40,7 @@ public class Blob
             {
                 throw e;
             }
+            return endResult;
         }
 
     private static String encryptPassword(String password)
