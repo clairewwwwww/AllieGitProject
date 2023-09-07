@@ -1,5 +1,6 @@
 import java.io.File;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.security.MessageDigest;
@@ -76,8 +77,19 @@ public class Blob
         return result;
     }
 
-        
+    public static void stringToFile (String string) throws IOException
+        {
+     
 
+
+            // attach a file to FileWriter
+            FileWriter fw= new FileWriter("output.txt");
+     
+                fw.write(string);
+     
+            //close the file
+            fw.close();
+        }
 
 
 }
