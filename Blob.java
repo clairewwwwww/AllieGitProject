@@ -28,7 +28,7 @@ public class Blob
             FileReader fr;
             try
             {
-                fr = new FileReader("output.txt");
+                fr = new FileReader(fileName);
                 while(fr.ready())
                 {
                     ch = (char) fr.read();
