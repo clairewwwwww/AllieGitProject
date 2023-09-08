@@ -40,7 +40,8 @@ public class Index {
         PrintWriter pw = new PrintWriter ("index");
         for (HashMap.Entry <String, String> entry : hm.entrySet ())
         {
-            pw.println (entry.getKey () + " : " + entry.getValue ());
+            String string = entry.getKey () + " : " + entry.getValue ();
+            pw.println (string);
 
         }
         pw.close();
