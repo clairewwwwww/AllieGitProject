@@ -26,7 +26,6 @@ public class Blob
         {
             String endResult = "";
             //File file = new File ("output.txt");
-            File file = new File (fileName);
             char ch;
  
              // check if File exists or not
