@@ -13,8 +13,9 @@ public class Blob
     public Blob (String fileName) throws Throwable
     {
         String beforeShah = fileToString (fileName);
-        System.out.println (encryptPassword (beforeShah));
-    }
+        String password = encryptPassword (beforeShah);
+        stringToFile (password, fileName);
+    }   
 
 
 
@@ -77,15 +78,28 @@ public class Blob
         return result;
     }
 
-    public static void stringToFile (String string) throws IOException
+    public static void stringToFile (String string, String fileName) throws IOException
         {
      
 
 
             // attach a file to FileWriter
-            FileWriter fw= new FileWriter("output.txt");
-     
-                fw.write(string);
+            File file = new File ("objects/" + string);
+            file.createNewFile();
+            FileWriter fw= new FileWriter(file);
+            FileReader fr = new FileReader (fileName);
+
+            char ch;
+            String endResult = "";
+            while(fr.ready())
+                {
+                    ch = (char) fr.read();
+                    endResult += ch;
+                }
+
+
+
+                fw.write(endResult);
      
             //close the file
             fw.close();
