@@ -6,10 +6,12 @@ import java.util.HashMap;
 public class Index {
     
     private HashMap <String, String> hm;
-    public Index()
+    private PrintWriter pw;
+    public Index() throws FileNotFoundException
     {
 
         hm = new HashMap <String, String> ();
+        pw = new PrintWriter ("index");
     }
 
     public void initialize ()
@@ -35,9 +37,6 @@ public class Index {
         String s = Blob.encryptPassword(fileName);
         hm.put (blob.originalName(), s);
         
-
-
-        PrintWriter pw = new PrintWriter ("index");
         for (HashMap.Entry <String, String> entry : hm.entrySet ())
         {
             String string = entry.getKey () + " : " + entry.getValue ();
@@ -55,7 +54,6 @@ public class Index {
     {
         hm.remove (fileName);
 
-         PrintWriter pw = new PrintWriter ("index");
         for (HashMap.Entry <String, String> entry : hm.entrySet ())
         {
             pw.println (entry.getKey () + " : " + entry.getValue ());
