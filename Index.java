@@ -1,6 +1,8 @@
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
+import java.io.PrintWriter;
 import java.util.HashMap;
 
 public class Index {
@@ -29,36 +31,38 @@ public class Index {
         }
     }
 
-    public void addBlobs (String fileName)
+    public void addBlobs (String fileName) throws Throwable
     {
         Blob blob = new Blob (fileName);
-        hm.add (blob.originalName, Blob.encryptPassword(fileName));
+        String s = Blob.encryptPassword(fileName);
+        hm.put (blob.originalName(), s);
+        
 
 
         PrintWriter pw = new PrintWriter ("index");
-        for (HashMap.Entry <String, String> entry : index.entrySet ())
+        for (HashMap.Entry <String, String> entry : hm.entrySet ())
         {
             pw.println (entry.getKey () + " : " + entry.getValue ());
 
         }
-        pw.close;
+        pw.close();
 
 
 
     }
 
 
-    public void removeBlob (String fileName)
+    public void removeBlob (String fileName) throws FileNotFoundException
     {
         hm.remove (fileName);
 
          PrintWriter pw = new PrintWriter ("index");
-        for (HashMap.Entry <String, String> entry : index.entrySet ())
+        for (HashMap.Entry <String, String> entry : hm.entrySet ())
         {
             pw.println (entry.getKey () + " : " + entry.getValue ());
 
         }
-        pw.close;
+        pw.close();
     }
 
 
