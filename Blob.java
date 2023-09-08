@@ -10,11 +10,14 @@ import java.util.Formatter;
 public class Blob
 {
 
+    public String name = "";
     public Blob (String fileName) throws Throwable
     {
-        String beforeShah = fileToString (fileName);
+        name = fileName;
+        String beforeShah = fileToString (name);
         String password = encryptPassword (beforeShah);
-        stringToFile (password, fileName);
+        stringToFile (password, name);
+        
     }   
 
 
@@ -103,6 +106,11 @@ public class Blob
      
             //close the file
             fw.close();
+        }
+
+        public String originalName ()
+        {
+            return name;
         }
 
 
