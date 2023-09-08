@@ -42,6 +42,7 @@ public class Blob
                 fr.close();
             } catch (Error | IOException e)
             {
+                
                 throw e;
             }
             return endResult;
