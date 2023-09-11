@@ -3,7 +3,7 @@ public class Tester {
         Blob tester = new Blob ("tester.txt");
         Index index = new Index ();
         index.addBlobs("tester.txt");
-        index.addBlobs ("tester.txt");
-        index.removeBlob ("tester.txt");
+        //index.addBlobs ("tester.txt");
+        //index.removeBlob("tester.txt");
     }
 }

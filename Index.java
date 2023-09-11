@@ -14,21 +14,14 @@ public class Index {
         pw = new PrintWriter ("index");
     }
 
-    public void initialize ()
+    public void initialize (String fileName)
     {
-        File file = new File ("objects");
+        File file = new File (fileName);
         if (!file.exists() || !file.isDirectory())
         {
-            String dirName = "objects";
-            File directory = new File (dirName);
-            directory.mkdirs();
+            File newFile = new File("index");
         }
-        File index = new File ("objects");
-
-        if (!index.exists ())
-        {
-            index = new File ("objects", "index");
-        }
+        new File("objects").mkdirs();
     }
 
     public void addBlobs (String fileName) throws Throwable
@@ -41,14 +34,9 @@ public class Index {
         {
             String string = entry.getKey () + " : " + entry.getValue ();
             pw.println (string);
-
         }
         pw.close();
-
-
-
     }
-
 
     public void removeBlob (String fileName) throws FileNotFoundException
     {
@@ -61,10 +49,6 @@ public class Index {
         }
         pw.close();
     }
-
-
-
-
  }
 
 
