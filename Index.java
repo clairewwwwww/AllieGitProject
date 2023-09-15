@@ -41,7 +41,7 @@ public class Index {
     public void removeBlob (String fileName) throws FileNotFoundException
     {
         hm.remove (fileName);
-
+        
         for (HashMap.Entry <String, String> entry : hm.entrySet ())
         {
             pw.println (entry.getKey () + " : " + entry.getValue ());
