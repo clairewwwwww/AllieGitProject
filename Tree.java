@@ -14,17 +14,19 @@ public class Tree {
     private HashMap <String, String> treeMap;
     private HashMap <String, TreeMap<String, String>> blobMap;
     private PrintWriter pw;
+
     public Tree() throws FileNotFoundException
     {
+        initialize();
         treeMap = new HashMap <String, String> ();
         blobMap = new HashMap <String, TreeMap<String, String>> ();
         pw = new PrintWriter ("tree");
     }
 
-    public void initialize (String fileName)
+    public void initialize ()
     {
         File file = new File ("tree");
-        if (!file.exists() || !file.isDirectory())
+        if (!file.exists())
         {
             File newFile = new File("tree");
         }
@@ -58,21 +60,20 @@ Do NOT allow for duplicate 'trees' or duplicate 'filenames' in the file */
         }
 
         Set<String> treeSet = treeMap.keySet();
-        for(String key1: treeSet)
-		{
-            TreeMap<String, String> temp = blobMap.get(key1);
-            
-            String string = key1 + " : " + temp.firstKey() + " : " + temp.lastKey(); 
-            pw.println(string);
-		}
-
         Set<String> blobSet = blobMap.keySet();
-        for(String key2: blobSet)
-		{
-            String string = key2 + " : " + blobMap.get(key2);
-            pw.println(string);
+
+        for(String key1: treeSet)
+		{             
+            String string1 = key1 + " : " + treeMap.get(key1);
+            pw.println(string1);
 		}
         
+        for(String key2: blobSet)
+		{
+            TreeMap<String, String> temp = blobMap.get(key2);
+            String string2 = key2 + " : " + temp.firstKey() + temp.firstEntry();
+            pw.println(string2);
+		}
         pw.close();
     }
 /*Remove an entry from a tree by...
@@ -81,17 +82,45 @@ Remove a BLOB entry from the tree based on a filename
 Remove a TREE entry based on SHA1
     tree.remove("bd1ccec139dead5ee0d8c3a0499b42a7d43ac44b")
  */
-    public void removeBlob (String entry) throws FileNotFoundException
+    public void removeBlob (String entry) throws IOException
     {
-        String SHA = entry.substring(7, 47);
-
-        hm.remove (fileName);
-        
-        for (HashMap.Entry <String, String> entry : hm.entrySet ())
+        String shaOfFile = entry.substring(7, 47);
+        String optionalFileName = entry.substring(50);
+        Set<String> treeSet = treeMap.keySet();
+        for(String key1: treeSet)
         {
-            pw.println (entry.getKey () + " : " + entry.getValue ());
-
+            if(treeMap.get(key1).equals(shaOfFile))
+            {
+                treeMap.remove(key1);
+            }
         }
+        Set<String> blobSet = blobMap.keySet();
+        for(String key2: blobSet)
+        {
+            TreeMap<String, String> temp = blobMap.get(key2);
+            if(temp.get(temp.firstKey()).equals(optionalFileName))
+            {
+                blobMap.remove(key2);
+            }
+        }
+
+        pw = new PrintWriter(new FileWriter("tree", false));
+
+        Set<String> treeSetNew = treeMap.keySet();
+        Set<String> blobSetNew = blobMap.keySet();
+
+        for(String key1: treeSetNew)
+		{             
+            String string = key1 + " : " + treeMap.get(key1);
+            pw.println(string);
+		}
+        
+        for(String key2: blobSetNew)
+		{
+            TreeMap<String, String> temp = blobMap.get(key2);
+            String string = key2 + " : " + temp.firstKey() + temp.firstEntry();
+            pw.println(string);
+		}
         pw.close();
     }
 }
