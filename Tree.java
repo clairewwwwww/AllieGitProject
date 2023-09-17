@@ -4,6 +4,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.nio.file.Files;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -11,16 +12,16 @@ import java.util.Set;
 import java.util.TreeMap;
 
 public class Tree {
-    private HashMap <String, String> treeMap;
-    private HashMap <String, TreeMap<String, String>> blobMap;
-    private PrintWriter pw;
+    private ArrayList<String> treeList;
+    private HashMap <String, String> blobMap;
+    //private PrintWriter pw;
 
-    public Tree() throws FileNotFoundException
+    public Tree() throws IOException
     {
         initialize();
-        treeMap = new HashMap <String, String> ();
-        blobMap = new HashMap <String, TreeMap<String, String>> ();
-        pw = new PrintWriter ("tree");
+        treeList = new ArrayList<String>();
+        blobMap = new HashMap <String, String> ();
+        //pw = new PrintWriter(new FileWriter("tree", true));
     }
 
     public void initialize ()
@@ -47,80 +48,68 @@ Do NOT allow for duplicate 'trees' or duplicate 'filenames' in the file */
     {
         String typeOfFile = entry.substring(0, 4); 
         String shaOfFile = entry.substring(7, 47);
+        if(treeList.contains(shaOfFile) || blobMap.containsKey(shaOfFile))
+        {
+            return;
+        }
         if(typeOfFile.equals("tree"))
         {
-            treeMap.put(typeOfFile, shaOfFile);
+            treeList.add(shaOfFile);
         }
         else
         {
             String optionalFileName = entry.substring(50);
-            TreeMap<String, String> temp = new TreeMap<String, String>();
-            temp.put(shaOfFile, optionalFileName);
-            blobMap.put(typeOfFile, temp);
+            blobMap.put(shaOfFile, optionalFileName);
         }
-
-        Set<String> treeSet = treeMap.keySet();
-        Set<String> blobSet = blobMap.keySet();
-
-        for(String key1: treeSet)
-		{             
-            String string1 = key1 + " : " + treeMap.get(key1);
-            pw.println(string1);
-		}
-        
-        for(String key2: blobSet)
-		{
-            TreeMap<String, String> temp = blobMap.get(key2);
-            String string2 = key2 + " : " + temp.firstKey() + temp.firstEntry();
-            pw.println(string2);
-		}
-        pw.close();
+        printToFile();
     }
 /*Remove an entry from a tree by...
-Remove a BLOB entry from the tree based on a filename
-    tree.remove("file1.txt")
-Remove a TREE entry based on SHA1
-    tree.remove("bd1ccec139dead5ee0d8c3a0499b42a7d43ac44b")
+    Remove a BLOB entry from the tree based on a filename
+        tree.remove("file1.txt")
+    Remove a TREE entry based on SHA1
+        tree.remove("bd1ccec139dead5ee0d8c3a0499b42a7d43ac44b")
  */
-    public void removeBlob (String entry) throws IOException
+    public void removeTree (String entry) throws IOException
     {
-        String shaOfFile = entry.substring(7, 47);
-        String optionalFileName = entry.substring(50);
-        Set<String> treeSet = treeMap.keySet();
-        for(String key1: treeSet)
+        if(treeList.contains(entry))
         {
-            if(treeMap.get(key1).equals(shaOfFile))
-            {
-                treeMap.remove(key1);
-            }
+            treeList.remove(entry);
         }
+        else if (blobMap.containsValue(entry))
+        {
+            Set<String> blobSet = blobMap.keySet();
+            for(String key: blobSet)
+		    {
+                if(blobMap.get(key).equals(entry))
+                {
+                    blobMap.remove(key);
+                }
+		    }
+        }
+        printToFile();
+    }
+
+    private void printToFile() throws IOException
+    {
+        PrintWriter pw = new PrintWriter(new FileWriter("tree", false));
         Set<String> blobSet = blobMap.keySet();
-        for(String key2: blobSet)
-        {
-            TreeMap<String, String> temp = blobMap.get(key2);
-            if(temp.get(temp.firstKey()).equals(optionalFileName))
-            {
-                blobMap.remove(key2);
-            }
-        }
-
-        pw = new PrintWriter(new FileWriter("tree", false));
-
-        Set<String> treeSetNew = treeMap.keySet();
-        Set<String> blobSetNew = blobMap.keySet();
-
-        for(String key1: treeSetNew)
-		{             
-            String string = key1 + " : " + treeMap.get(key1);
-            pw.println(string);
-		}
-        
-        for(String key2: blobSetNew)
+        for(String key: blobSet)
 		{
-            TreeMap<String, String> temp = blobMap.get(key2);
-            String string = key2 + " : " + temp.firstKey() + temp.firstEntry();
-            pw.println(string);
+            String fileName = blobMap.get(key);
+            pw.append("blob : " + key + " : " + fileName);
+            pw.append("\n");
 		}
+
+        if(treeList.size() > 0)
+        {
+            int last = treeList.size()-1;
+            for (int i = 0; i < last; i++) 
+            {
+                pw.append("tree : " + treeList.get(i));
+                pw.append("\n");
+            }
+            pw.append("tree : " + treeList.get(last));
+        }
         pw.close();
     }
 }
