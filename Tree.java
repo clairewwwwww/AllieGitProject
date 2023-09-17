@@ -78,13 +78,15 @@ Do NOT allow for duplicate 'trees' or duplicate 'filenames' in the file */
         else if (blobMap.containsValue(entry))
         {
             Set<String> blobSet = blobMap.keySet();
+            String target = "";
             for(String key: blobSet)
 		    {
                 if(blobMap.get(key).equals(entry))
                 {
-                    blobMap.remove(key);
+                    target = key;
                 }
 		    }
+            blobMap.remove(target);
         }
         printToFile();
     }
