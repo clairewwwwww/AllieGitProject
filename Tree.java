@@ -18,20 +18,20 @@ public class Tree {
 
     public Tree() throws IOException
     {
-        initialize();
         treeList = new ArrayList<String>();
         blobMap = new HashMap <String, String> ();
         //pw = new PrintWriter(new FileWriter("tree", true));
     }
 
-    public void initialize ()
+    private void initialize () throws IOException
     {
         File file = new File ("tree");
+        new File("objects").mkdirs();
         if (!file.exists())
         {
-            File newFile = new File("tree");
+            file = new File ("objects/" + "tree");
+            file.createNewFile();
         }
-        //new File("objects").mkdirs();
     }
     /*Add another entry into the tree:
 Entries are added as new lines of Strings
@@ -46,6 +46,7 @@ Do NOT allow for duplicate 'trees' or duplicate 'filenames' in the file */
 
     public void addTree (String entry) throws Throwable
     {
+        //initialize();
         String typeOfFile = entry.substring(0, 4); 
         String shaOfFile = entry.substring(7, 47);
         if(treeList.contains(shaOfFile) || blobMap.containsKey(shaOfFile))
@@ -71,6 +72,7 @@ Do NOT allow for duplicate 'trees' or duplicate 'filenames' in the file */
  */
     public void removeTree (String entry) throws IOException
     {
+        //initialize();
         if(treeList.contains(entry))
         {
             treeList.remove(entry);
@@ -93,7 +95,12 @@ Do NOT allow for duplicate 'trees' or duplicate 'filenames' in the file */
 
     private void printToFile() throws IOException
     {
-        PrintWriter pw = new PrintWriter(new FileWriter("tree", false));
+        //initialize();
+        String folder = "objects"; /* something to pull specified dir from input */;
+        String file = "tree";
+        File dir = new File (folder);
+        File actualFile = new File (dir, file);
+        PrintWriter pw = new PrintWriter(new FileWriter(actualFile, false));
         Set<String> blobSet = blobMap.keySet();
         for(String key: blobSet)
 		{
