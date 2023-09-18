@@ -1,5 +1,7 @@
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.HashMap;
 
@@ -9,19 +11,22 @@ public class Index {
     private PrintWriter pw;
     public Index() throws FileNotFoundException
     {
-
         hm = new HashMap <String, String> ();
         pw = new PrintWriter ("index");
     }
 
-    public void initialize (String fileName)
+    public void initialize () throws IOException
     {
-        File file = new File (fileName);
-        if (!file.exists() || !file.isDirectory())
+        
+        File path = new File("objects");
+        path.mkdirs();
+        File file = new File ("index");
+        //String path = "objects" + File.separator + "index";
+        if (!file.exists())
         {
-            File newFile = new File("index");
+            //File newFile = new File
+            file.createNewFile();
         }
-        new File("objects").mkdirs();
     }
 
     public void addBlobs (String fileName) throws Throwable
