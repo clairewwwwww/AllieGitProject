@@ -77,6 +77,7 @@ public class IndexTest
     @Test
     void testAddBlobs() throws Throwable 
     {
+        index.initialize();
         index.addBlobs("file1");
 
         String expected = "something is here";

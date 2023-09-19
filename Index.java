@@ -31,7 +31,7 @@ public class Index {
 
     public void addBlobs (String fileName) throws Throwable
     {
-        //Blob blob = new Blob (fileName);
+        Blob blob = new Blob (fileName);
         String content = Blob.fileToString(fileName);
         String s = Blob.encryptPassword(content);
         hm.put(fileName, s);

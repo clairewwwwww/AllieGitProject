@@ -101,10 +101,10 @@ public class Blob
             fw.close();
         }
 
-        public String originalName ()
-        {
-            return name;
-        }
+    public String originalName ()
+    {
+        return name;
+    }
 
 
 }
