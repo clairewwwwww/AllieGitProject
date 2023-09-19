@@ -9,10 +9,11 @@ public class Index {
     
     private HashMap <String, String> hm;
     private PrintWriter pw;
-    public Index() throws FileNotFoundException
+    public Index() throws IOException
     {
         hm = new HashMap <String, String> ();
-        pw = new PrintWriter ("index");
+        pw = new PrintWriter (new FileWriter("index", false));
+        
     }
 
     public void initialize () throws IOException
@@ -33,7 +34,7 @@ public class Index {
         //Blob blob = new Blob (fileName);
         String content = Blob.fileToString(fileName);
         String s = Blob.encryptPassword(content);
-        hm.put (fileName, s);
+        hm.put(fileName, s);
         
         for (HashMap.Entry <String, String> entry : hm.entrySet ())
         {
@@ -43,14 +44,19 @@ public class Index {
         pw.close();
     }
 
-    public void removeBlob (String fileName) throws FileNotFoundException
+    public void removeBlob (String fileName) throws IOException
     {
-        hm.remove (fileName);
-        
-        for (HashMap.Entry <String, String> entry : hm.entrySet ())
+        hm.remove(fileName);
+        if(hm.isEmpty())
         {
-            pw.println (entry.getKey () + " : " + entry.getValue ());
-
+            pw = new PrintWriter (new FileWriter("index", false));
+        }
+        else
+        {
+            for (HashMap.Entry <String, String> entry : hm.entrySet ())
+            {
+                pw.println (entry.getKey () + " : " + entry.getValue ());
+            }
         }
         pw.close();
     }
