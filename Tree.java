@@ -18,9 +18,9 @@ import java.util.Set;
 import java.util.TreeMap;
 
 public class Tree {
-    private ArrayList<String> treeList;
-    private TreeMap <String, String> blobMap;
-    private String currentFileName;
+    private static ArrayList<String> treeList;
+    private static TreeMap <String, String> blobMap;
+    private static String currentFileName;
     //private File file; 
     //private PrintWriter pw;
 
@@ -63,7 +63,6 @@ Do NOT allow for duplicate 'trees' or duplicate 'filenames' in the file */
             String optionalFileName = entry.substring(50);
             blobMap.put(shaOfFile, optionalFileName);
         }
-        printToFile();
         updateName();
     }
     /*Remove an entry from a tree by...
@@ -91,28 +90,32 @@ Do NOT allow for duplicate 'trees' or duplicate 'filenames' in the file */
 		    }
             blobMap.remove(target);
         }
-        printToFile();
         updateName();
     }
 
-    public void updateName() throws Throwable
+    private void updateName() throws Throwable
     {
-        String newFileName = Blob.encryptPassword(content());
-        File oldFile = new File("objects", currentFileName);
-        File newFile = new File("objects", newFileName);
-        oldFile.renameTo(newFile);
-        File doomedFile = new File ("objects",currentFileName);
+        File doomedFile = new File ("objects", currentFileName);
         doomedFile.delete();
+        String newFileName = Blob.encryptPassword(content());
         currentFileName = newFileName;
+        printToFile();
+        /*File oldFile = new File("objects", currentFileName);
+        File newFile = new File("objects", newFileName);
+        oldFile.renameTo(newFile);*/
+        
     }
 
     private void printToFile() throws Throwable
     {
         String folder = "objects";
-        String file = currentFileName;
+        String file = getCurrentFileName();
         File dir = new File(folder);
         File actualFile = new File(dir,file);
         PrintWriter pw = new PrintWriter(new FileWriter(actualFile, false));
+        pw.write(content());
+        pw.close();
+        /* 
         //PrintWriter pw = new PrintWriter(new FileWriter(file, false));
         Set<String> blobSet = blobMap.keySet();
         for(String key: blobSet)
@@ -143,10 +146,10 @@ Do NOT allow for duplicate 'trees' or duplicate 'filenames' in the file */
             }
             pw.print("tree : " + treeList.get(last));
         }
-        pw.close();
+        pw.close();*/
     }
 
-    private String content()
+    public static String content()
     {
         String content = "";
         Set<String> blobSet = blobMap.keySet();
@@ -163,10 +166,11 @@ Do NOT allow for duplicate 'trees' or duplicate 'filenames' in the file */
                 content += "blob : " + key + " : " + fileName + "\n";
             }
 		}
-        if(!blobMap.isEmpty())
+        if(!blobMap.isEmpty() && !treeList.isEmpty())
         {
             content += "\n";
         }
+        
         if(treeList.size() > 0)
         {
             int last = treeList.size()-1;
@@ -177,5 +181,10 @@ Do NOT allow for duplicate 'trees' or duplicate 'filenames' in the file */
             content += "tree : " + treeList.get(last);
         }
         return content;
+    }
+
+    public static String getCurrentFileName()
+    {
+        return currentFileName;
     }
 }
