@@ -44,8 +44,17 @@ public class Index {
         pw.close();
     }
 
-    public void removeBlob (String fileName) throws IOException
+    public void removeBlob (String fileName) throws Throwable
     {
+        File file = new File(fileName);
+        if (file.exists()) 
+        {
+            String content = Blob.fileToString(fileName);
+            String s = Blob.encryptPassword(content);
+            File doomedFile = new File ("objects", s);
+            doomedFile.delete();
+        }
+
         hm.remove(fileName);
         if(hm.isEmpty())
         {
