@@ -11,6 +11,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.List;
 
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
@@ -41,7 +42,6 @@ public class IndexTest
         FileWriter fw = new FileWriter(f);
         fw.write(content);
         fw.close();
-
     }
 
     @AfterAll
@@ -56,6 +56,7 @@ public class IndexTest
     {
         index = new Index();
     }
+
     private String readFile(String fileName) throws IOException 
     {
 		BufferedReader br = new BufferedReader(new FileReader(fileName)); // the name of the file that want to read
@@ -72,17 +73,23 @@ public class IndexTest
 		}
     }
 
-    
+
     @Test
     void testAddBlobs() throws Throwable 
     {
         index.addBlobs("file1");
 
-        File file = new File("file1");
-        String content = "something is here";
+        String expected = "something is here";
+        File file = new File("objects", "53d45fe9bb51b94c43b04b6fcbc0d8aa874c9ed6"); //SHA1 of the content
+        Path filePath = Paths.get("objects", "53d45fe9bb51b94c43b04b6fcbc0d8aa874c9ed6");
+        List<String> temp = Files.readAllLines(filePath);
+        String actual = "";
+        for (String c : temp) 
+        {
+            actual += c;
+        }
         assertTrue(file.exists());
-        assertEquals(content, readFile("file1"));
-
+        assertEquals(expected, actual);
     }
 
     @Test
@@ -101,7 +108,32 @@ public class IndexTest
     }
 
     @Test
+    void existInIndex() throws Throwable
+    {
+        index.addBlobs("file1");
+
+        File file = new File("file1");
+        String content = "something is here";
+        assertTrue(file.exists()); //check existance/fileName
+        assertEquals(content, readFile("file1")); //check content
+    }
+
+    @Test
     void testRemoveBlob() {
 
+    }
+
+    //Adding a File to the index given a filename
+    @Test
+    void checkIndexAdd() throws Throwable
+    {
+        index.addBlobs("file1");
+
+        //File file = new File("index");
+        String actual = readFile("index");
+
+        String expected = "file1" + " : " + "53d45fe9bb51b94c43b04b6fcbc0d8aa874c9ed6"; //SHA1 of the content in "file1"
+
+        assertEquals(expected, actual);
     }
 }
