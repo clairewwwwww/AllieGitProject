@@ -132,4 +132,15 @@ public class IndexTest
         String expected = "file1" + " : " + "53d45fe9bb51b94c43b04b6fcbc0d8aa874c9ed6" + "\n"; //SHA1 of the content in "file1"
         assertEquals(expected, actual);
     }
+
+    @Test
+    void checkIndexRemove() throws Throwable
+    {
+        index.addBlobs("file1");
+        index.removeBlob("file1");
+
+        String actual = readFile("index");
+        String expected = ""; 
+        assertEquals(expected, actual);
+    }
 }
