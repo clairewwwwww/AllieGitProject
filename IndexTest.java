@@ -128,12 +128,8 @@ public class IndexTest
     void checkIndexAdd() throws Throwable
     {
         index.addBlobs("file1");
-
-        //File file = new File("index");
         String actual = readFile("index");
-
-        String expected = "file1" + " : " + "53d45fe9bb51b94c43b04b6fcbc0d8aa874c9ed6"; //SHA1 of the content in "file1"
-
+        String expected = "file1" + " : " + "53d45fe9bb51b94c43b04b6fcbc0d8aa874c9ed6" + "\n"; //SHA1 of the content in "file1"
         assertEquals(expected, actual);
     }
 }

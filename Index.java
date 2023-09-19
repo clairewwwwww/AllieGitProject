@@ -21,7 +21,6 @@ public class Index {
         File path = new File("objects");
         path.mkdirs();
         File file = new File ("index");
-        //String path = "objects" + File.separator + "index";
         if (!file.exists())
         {
             //File newFile = new File
@@ -31,14 +30,15 @@ public class Index {
 
     public void addBlobs (String fileName) throws Throwable
     {
-        Blob blob = new Blob (fileName);
-        String s = Blob.encryptPassword(fileName);
-        hm.put (blob.originalName(), s);
+        //Blob blob = new Blob (fileName);
+        String content = Blob.fileToString(fileName);
+        String s = Blob.encryptPassword(content);
+        hm.put (fileName, s);
         
         for (HashMap.Entry <String, String> entry : hm.entrySet ())
         {
-            String string = entry.getKey () + " : " + entry.getValue ();
-            pw.println (string);
+            String string = entry.getKey () + " : " + entry.getValue();
+            pw.println(string);
         }
         pw.close();
     }
