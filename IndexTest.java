@@ -1,7 +1,12 @@
 import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.Assert.assertFalse;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -18,12 +23,25 @@ public class IndexTest
     private static Blob blob;
 
     @BeforeAll
-    static void setUpBeforeClass() throws Exception {
+    static void setUpBeforeClass() throws Exception 
+    {
         /*
          * Utils.writeStringToFile("junit_example_file_data.txt", "test file contents");
          * Utils.deleteFile("index");
          * Utils.deleteDirectory("objects");
          */
+        createFile("file1", "something is here");
+        createFile("file2", "something is also here");
+    }
+
+    private static void createFile(String fileName, String content) throws IOException
+    {
+        File f = new File(fileName); 
+        f.createNewFile();
+        FileWriter fw = new FileWriter(f);
+        fw.write(content);
+        fw.close();
+
     }
 
     @AfterAll
@@ -38,11 +56,33 @@ public class IndexTest
     {
         index = new Index();
     }
+    private String readFile(String fileName) throws IOException 
+    {
+		BufferedReader br = new BufferedReader(new FileReader(fileName)); // the name of the file that want to read
+		try {
+			String string = "";
+			while (br.ready()) {
+				string += (char) br.read(); // read the char in the file, store to a string
+			}
+			br.close();
+			return string; // return the string
+		} catch (FileNotFoundException e) // if the file name is not found
+		{
+			return "File not found, whoops!";
+		}
+    }
+
     
     @Test
     void testAddBlobs() throws Throwable 
     {
-        
+        index.addBlobs("file1");
+
+        File file = new File("file1");
+        String content = "something is here";
+        assertTrue(file.exists());
+        assertEquals(content, readFile("file1"));
+
     }
 
     @Test
