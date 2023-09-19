@@ -1,4 +1,5 @@
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -6,6 +7,10 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.List;
 
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -65,17 +70,34 @@ public class BlobTest
     }
 
     @Test
-    void testFileToString() {
-
+    void testFileToString() throws Throwable {
+        String expected = Blob.fileToString("file1");
+        String actual = "something is here";
+        assertEquals(expected, actual);
     }
 
     @Test
     void testOriginalName() {
-
+        String actual = blob.originalName();
+        String expected = "file1";
+        assertEquals(expected, actual);
     }
 
     @Test
-    void testStringToFile() {
+    void testStringToFile() throws IOException {
 
+        Blob.stringToFile("something is here", "file1");
+        
+        String expected = "something is here";
+        File file = new File("objects", "53d45fe9bb51b94c43b04b6fcbc0d8aa874c9ed6"); //SHA1 of the content
+        Path filePath = Paths.get("objects", "53d45fe9bb51b94c43b04b6fcbc0d8aa874c9ed6");
+        List<String> temp = Files.readAllLines(filePath);
+        String actual = "";
+        for (String c : temp) 
+        {
+            actual += c;
+        }
+        assertTrue(file.exists());
+        assertEquals(expected, actual);
     }
 }
