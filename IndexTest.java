@@ -114,13 +114,19 @@ public class IndexTest
 
         File file = new File("file1");
         String content = "something is here";
-        assertTrue(file.exists()); //check existance/fileName
-        assertEquals(content, readFile("file1")); //check content
+        assertTrue(file.exists()); 
+        assertEquals(content, readFile("file1")); 
     }
 
     @Test
-    void testRemoveBlob() {
+    void testRemoveBlob() throws Throwable {
 
+        index.addBlobs("file1");
+        index.removeBlob("file1");
+
+        File file = new File("objects", "53d45fe9bb51b94c43b04b6fcbc0d8aa874c9ed6");
+        
+        assertTrue(!file.exists()); 
     }
 
     //Adding a File to the index given a filename
