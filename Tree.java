@@ -1,38 +1,40 @@
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.nio.charset.Charset;
 import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
 
 public class Tree {
     private ArrayList<String> treeList;
-    private HashMap <String, String> blobMap;
+    private TreeMap <String, String> blobMap;
+    private String currentFileName;
+    //private File file; 
     //private PrintWriter pw;
 
     public Tree() throws IOException
     {
         treeList = new ArrayList<String>();
-        blobMap = new HashMap <String, String> ();
+        blobMap = new TreeMap <String, String> ();
+        currentFileName = "init";
+        File path = new File("objects");
+        path.mkdirs();
+        //this.file = file;
         //pw = new PrintWriter(new FileWriter("tree", true));
     }
-
-    private void initialize () throws IOException
-    {
-        File file = new File ("tree");
-        new File("objects").mkdirs();
-        if (!file.exists())
-        {
-            file = new File ("objects/" + "tree");
-            file.createNewFile();
-        }
-    }
+    
     /*Add another entry into the tree:
 Entries are added as new lines of Strings
     tree.add("tree : bd1ccec139dead5ee0d8c3a0499b42a7d43ac44b")
@@ -46,7 +48,6 @@ Do NOT allow for duplicate 'trees' or duplicate 'filenames' in the file */
 
     public void addTree (String entry) throws Throwable
     {
-        //initialize();
         String typeOfFile = entry.substring(0, 4); 
         String shaOfFile = entry.substring(7, 47);
         if(treeList.contains(shaOfFile) || blobMap.containsKey(shaOfFile))
@@ -63,16 +64,16 @@ Do NOT allow for duplicate 'trees' or duplicate 'filenames' in the file */
             blobMap.put(shaOfFile, optionalFileName);
         }
         printToFile();
+        updateName();
     }
-/*Remove an entry from a tree by...
+    /*Remove an entry from a tree by...
     Remove a BLOB entry from the tree based on a filename
         tree.remove("file1.txt")
     Remove a TREE entry based on SHA1
         tree.remove("bd1ccec139dead5ee0d8c3a0499b42a7d43ac44b")
  */
-    public void removeTree (String entry) throws IOException
+    public void removeTree (String entry) throws Throwable
     {
-        //initialize();
         if(treeList.contains(entry))
         {
             treeList.remove(entry);
@@ -91,34 +92,90 @@ Do NOT allow for duplicate 'trees' or duplicate 'filenames' in the file */
             blobMap.remove(target);
         }
         printToFile();
+        updateName();
     }
 
-    private void printToFile() throws IOException
+    public void updateName() throws Throwable
     {
-        //initialize();
-        String folder = "objects"; /* something to pull specified dir from input */;
-        String file = "tree";
-        File dir = new File (folder);
-        File actualFile = new File (dir, file);
+        String newFileName = Blob.encryptPassword(content());
+        File oldFile = new File("objects", currentFileName);
+        File newFile = new File("objects", newFileName);
+        oldFile.renameTo(newFile);
+        File doomedFile = new File ("objects",currentFileName);
+        doomedFile.delete();
+        currentFileName = newFileName;
+    }
+
+    private void printToFile() throws Throwable
+    {
+        String folder = "objects";
+        String file = currentFileName;
+        File dir = new File(folder);
+        File actualFile = new File(dir,file);
         PrintWriter pw = new PrintWriter(new FileWriter(actualFile, false));
+        //PrintWriter pw = new PrintWriter(new FileWriter(file, false));
         Set<String> blobSet = blobMap.keySet();
         for(String key: blobSet)
 		{
-            String fileName = blobMap.get(key);
-            pw.append("blob : " + key + " : " + fileName);
-            pw.append("\n");
-		}
-
+            if(blobMap.lastKey().equals(key))
+            {
+                String fileName = blobMap.get(key);
+                pw.print("blob : " + key + " : " + fileName);
+            }
+            else
+            {
+                String fileName = blobMap.get(key);
+                pw.print("blob : " + key + " : " + fileName);
+                pw.print("\n");
+            }
+        }
+        if(!blobMap.isEmpty() && !treeList.isEmpty())
+        {
+            pw.print("\n");
+        }
         if(treeList.size() > 0)
         {
             int last = treeList.size()-1;
             for (int i = 0; i < last; i++) 
             {
-                pw.append("tree : " + treeList.get(i));
-                pw.append("\n");
+                pw.println("tree : " + treeList.get(i));
+                //pw.print("\n");
             }
-            pw.append("tree : " + treeList.get(last));
+            pw.print("tree : " + treeList.get(last));
         }
         pw.close();
+    }
+
+    private String content()
+    {
+        String content = "";
+        Set<String> blobSet = blobMap.keySet();
+        for(String key: blobSet)
+		{
+            if(blobMap.lastKey().equals(key))
+            {
+                String fileName = blobMap.get(key);
+                content += "blob : " + key + " : " + fileName;
+            }
+            else
+            {
+                String fileName = blobMap.get(key);
+                content += "blob : " + key + " : " + fileName + "\n";
+            }
+		}
+        if(!blobMap.isEmpty())
+        {
+            content += "\n";
+        }
+        if(treeList.size() > 0)
+        {
+            int last = treeList.size()-1;
+            for (int i = 0; i < last; i++) 
+            {
+                content += "tree : " + treeList.get(i) + "\n";
+            }
+            content += "tree : " + treeList.get(last);
+        }
+        return content;
     }
 }
