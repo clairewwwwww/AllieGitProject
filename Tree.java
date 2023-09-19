@@ -113,7 +113,7 @@ Do NOT allow for duplicate 'trees' or duplicate 'filenames' in the file */
         File dir = new File(folder);
         File actualFile = new File(dir,file);
         PrintWriter pw = new PrintWriter(new FileWriter(actualFile, false));
-        pw.write(content());
+        pw.print(content());
         pw.close();
         /* 
         //PrintWriter pw = new PrintWriter(new FileWriter(file, false));
@@ -170,7 +170,7 @@ Do NOT allow for duplicate 'trees' or duplicate 'filenames' in the file */
         {
             content += "\n";
         }
-        
+
         if(treeList.size() > 0)
         {
             int last = treeList.size()-1;
